@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Make the call</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #f5f8ff; --surface: #ffffff; --ink: #0e0e0e; --muted: #454f68;
+  --blue: #266de8; --blue-text: #1c56c4; --yellow: #ffe629; --soft: #e6eeff; --paper: #fffdf3;
+  --line: #0e0e0e; --shadow: #0e0e0e; --dot: rgba(38, 109, 232, 0.16);
+  --good-bg: #d9e6ff; --bad-bg: #ffe0dc; --bad: #d2403d; --bad-text: #a8221f;
+  --green: #1f9d57; --green-bg: #d8f3e3; --amber-bg: #fff4a8;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #0b1020; --surface: #151c33; --ink: #f5f8ff; --muted: #aeb9d6; --blue-text: #8db1ff; --soft: #1d2848; --paper: #1b233d; --line: #dfe7ff; --shadow: #2b3a73; --dot: rgba(141, 177, 255, 0.14); --good-bg: #16305f; --bad-bg: #4a2027; --bad: #e0504d; --bad-text: #ff9f9f; --green: #2fb36a; --green-bg: #12392a; --amber-bg: #3d3710; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #0b1020; --surface: #151c33; --ink: #f5f8ff; --muted: #aeb9d6; --blue-text: #8db1ff; --soft: #1d2848; --paper: #1b233d; --line: #dfe7ff; --shadow: #2b3a73; --dot: rgba(141, 177, 255, 0.14); --good-bg: #16305f; --bad-bg: #4a2027; --bad: #e0504d; --bad-text: #ff9f9f; --green: #2fb36a; --green-bg: #12392a; --amber-bg: #3d3710; color-scheme: dark; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); height: 100%; }
+*, *::before, *::after { box-sizing: inherit; }
+body { margin: 0; min-height: 100%; background: var(--bg); color: var(--ink); font: 400 17px/1.55 "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif; overflow-x: hidden; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none; background-image: radial-gradient(circle, var(--dot) 2px, transparent 2.6px); background-size: 34px 34px; }
+.deco { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.deco i { position: absolute; border-radius: 50%; }
+.deco .a { width: 420px; height: 420px; background: var(--yellow); opacity: 0.3; right: -150px; top: -130px; }
+.deco .b { width: 540px; height: 540px; background: var(--blue); opacity: 0.14; left: -220px; bottom: -220px; }
+h1, h2, h3 { font-family: "Bricolage Grotesque", "Instrument Sans", system-ui, sans-serif; margin: 0; line-height: 1.1; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 4px solid var(--blue); outline-offset: 3px; }
+.top { background: var(--blue); border-bottom: 3px solid var(--line); }
+.top-in { max-width: 940px; margin: 0 auto; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.logo { display: block; height: 34px; width: auto; }
+.top-tag { color: #fff; font-weight: 600; font-size: 15px; }
+.wrap { max-width: 940px; margin: 0 auto; padding: 26px 18px 72px; display: grid; gap: 30px; }
+.card { background: var(--surface); border: 3px solid var(--line); border-radius: 26px; box-shadow: 8px 8px 0 var(--shadow); padding: 26px; }
+.hero { text-align: center; padding: 34px 26px 30px; }
+.title { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; font-size: clamp(42px, 11vw, 72px); font-weight: 800; letter-spacing: -0.03em; }
+.stk { display: inline-block; padding: 6px 20px 10px; border: 3px solid var(--line); border-radius: 18px; box-shadow: 5px 5px 0 var(--shadow); }
+.stk.s1 { background: var(--blue); color: #fff; transform: rotate(-3deg); }
+.stk.s2 { background: var(--yellow); color: #0e0e0e; transform: rotate(2.5deg); }
+.lead { max-width: 34em; margin: 22px auto 0; font-size: 19px; }
+.lamp { display: inline-block; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--line); flex: none; }
+.lamp.g { background: var(--green); } .lamp.c { background: var(--yellow); } .lamp.i { background: var(--blue); } .lamp.n { background: var(--bad); }
+.dots { display: flex; gap: 10px; justify-content: center; margin-top: 22px; flex-wrap: wrap; }
+.dot { width: 42px; height: 42px; border-radius: 50%; border: 3px solid var(--line); display: grid; place-items: center; font: 800 17px/1 "Bricolage Grotesque", system-ui, sans-serif; background: var(--surface); transition: background 0.3s; }
+.dot.cur { background: var(--yellow); color: #0e0e0e; } .dot.ok { background: var(--blue); color: #fff; } .dot.no { background: var(--bad); color: #fff; }
+.ptext { margin-top: 10px; font-weight: 600; color: var(--muted); }
+.file { position: relative; padding-top: 38px; margin-top: 12px; }
+.tab { position: absolute; left: 24px; top: -16px; background: var(--yellow); color: #0e0e0e; border: 3px solid var(--line); border-radius: 12px 12px 0 0; padding: 4px 16px; font: 800 17px/1.3 "Bricolage Grotesque", system-ui, sans-serif; }
+.chip { display: inline-block; background: var(--tc, var(--soft)); color: #0e0e0e; border: 2px solid var(--line); border-radius: 999px; padding: 2px 12px; font-weight: 600; font-size: 14px; line-height: 1.5; vertical-align: middle; }
+.t-hr { --tc: #ffb8d0; } .t-marketing { --tc: #d4c2ff; } .t-support { --tc: #a8ccff; } .t-operations { --tc: #ffcf99; } .t-sales { --tc: #ffadad; } .t-revops { --tc: #ffe629; } .t-cs { --tc: #9fe3e6; }
+.file h2 { font-size: clamp(24px, 5vw, 32px); font-weight: 800; letter-spacing: -0.02em; margin-top: 8px; }
+.q { font: 800 20px/1.3 "Bricolage Grotesque", system-ui, sans-serif; margin: 22px 0 12px; }
+.res { margin-top: 22px; display: grid; gap: 12px; }
+.res[hidden] { display: none; }
+.verdict { padding: 14px 18px; border: 3px solid var(--line); border-radius: 18px; box-shadow: 5px 5px 0 var(--shadow); animation: rise 0.35s ease-out; }
+.verdict.right { background: var(--good-bg); } .verdict.wrong { background: var(--bad-bg); }
+.verdict h3 { font-size: 22px; font-weight: 800; }
+.verdict p { margin: 4px 0 0; }
+.box { background: var(--soft); border: 3px solid var(--line); border-radius: 16px; padding: 12px 16px; }
+.box b { font: 800 16px/1.3 "Bricolage Grotesque", system-ui, sans-serif; display: block; margin-bottom: 2px; }
+.remember { display: inline-block; justify-self: start; background: var(--yellow); color: #0e0e0e; border: 3px solid var(--line); border-radius: 14px; padding: 8px 16px; font: 800 18px/1.3 "Bricolage Grotesque", system-ui, sans-serif; box-shadow: 4px 4px 0 var(--shadow); transform: rotate(-1deg); }
+.fixbox { border: 2px dashed var(--line); border-radius: 14px; padding: 10px 14px; background: var(--surface); }
+.fixbox b { font: 800 16px/1.3 "Bricolage Grotesque", system-ui, sans-serif; display: block; }
+.btn { display: inline-flex; cursor: pointer; margin-top: 4px; background: var(--yellow); color: #0e0e0e; border: 3px solid var(--line); border-radius: 16px; padding: 12px 24px; font: 800 19px/1.1 "Bricolage Grotesque", system-ui, sans-serif; box-shadow: 5px 5px 0 var(--shadow); transition: transform 0.12s, box-shadow 0.12s; }
+.btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--shadow); }
+.btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--shadow); }
+.tally { text-align: center; }
+.tally[hidden] { display: none; }
+.tally h2 { font-size: clamp(30px, 7vw, 44px); font-weight: 800; letter-spacing: -0.025em; }
+.tally > p { margin: 10px auto 0; max-width: 32em; font-size: 19px; }
+.rows { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 10px; text-align: left; }
+.rows li { display: flex; gap: 12px; align-items: center; background: var(--soft); border: 3px solid var(--line); border-radius: 16px; padding: 10px 14px; font-size: 16px; line-height: 1.35; }
+.rows .mk { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--line); display: grid; place-items: center; font: 800 16px/1 "Bricolage Grotesque", system-ui, sans-serif; background: var(--blue); color: #fff; }
+.rows .mk.no { background: var(--bad); }
+.rows b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 800; }
+.sheet { margin-top: 24px; text-align: left; display: grid; gap: 10px; }
+.sheet h3 { font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 4px; }
+.sheet div { display: flex; gap: 12px; align-items: flex-start; border: 3px solid var(--line); border-radius: 16px; padding: 10px 14px; background: var(--surface); }
+.sheet .lamp { margin-top: 3px; }
+.next { text-align: center; font: 800 20px/1.3 "Bricolage Grotesque", system-ui, sans-serif; margin: 0; }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes stampIn { 0% { opacity: 0; transform: rotate(-24deg) scale(2.6); } 70% { opacity: 1; transform: rotate(-7deg) scale(0.94); } 100% { opacity: 0.92; transform: rotate(-9deg) scale(1); } }
+@media (max-width: 640px) {
+  .card { padding: 18px; border-radius: 22px; box-shadow: 6px 6px 0 var(--shadow); }
+  .card.file { padding-top: 38px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+.legend { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 24px 0 0; text-align: left; }
+.lgt { background: var(--soft); border: 3px solid var(--line); border-radius: 18px; padding: 12px 14px; font-size: 15px; line-height: 1.4; font-weight: 500; }
+.lgt b { display: flex; align-items: center; gap: 8px; font: 800 17px/1.2 "Bricolage Grotesque", system-ui, sans-serif; margin-bottom: 4px; }
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.clock { font-weight: 600; color: var(--muted); }
+.story { font-size: 19px; margin: 12px 0 0; }
+.calls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.call { cursor: pointer; text-align: left; background: var(--surface); border: 3px solid var(--line); border-radius: 18px; padding: 14px; box-shadow: 5px 5px 0 var(--shadow); display: grid; gap: 6px; align-content: start; transition: transform 0.12s, box-shadow 0.12s; }
+.call .lamp { width: 30px; height: 30px; }
+.call b { font: 800 19px/1.15 "Bricolage Grotesque", system-ui, sans-serif; }
+.call span { font-size: 14.5px; color: var(--muted); line-height: 1.35; }
+.call em { font-style: normal; font: 800 14px/1.2 "Bricolage Grotesque", system-ui, sans-serif; color: var(--blue-text); }
+.call:hover:not([disabled]) { transform: translate(-2px, -2px) rotate(-1deg); box-shadow: 7px 7px 0 var(--shadow); }
+.call:active:not([disabled]) { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--shadow); }
+.call[disabled] { cursor: default; box-shadow: none; opacity: 0.55; }
+.call.chosen { opacity: 1; background: var(--yellow); color: #0e0e0e; }
+.call.chosen span, .call.chosen em { color: #0e0e0e; }
+.call.right { opacity: 1; outline: 4px solid var(--blue); outline-offset: 2px; }
+@media (max-width: 760px) { .legend, .calls { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 460px) { .legend, .calls { grid-template-columns: 1fr; } }
+
+</style>
+</head>
+<body>
+<div class="deco" aria-hidden="true"><i class="a"></i><i class="b"></i></div>
+<header class="top">
+  <div class="top-in">
+    <svg class="logo" role="img" aria-label="TaxDome" viewBox="0 0 120 32" width="128" height="34"><path d="M10.5356 3.37849C11.3829 2.90571 12.4132 2.87566 13.2834 3.28941L13.4548 3.37849L15.1444 4.32389C15.4687 4.50548 15.5262 4.91904 15.3533 5.20702C15.1864 5.48465 14.8167 5.62805 14.5061 5.45511L12.7885 4.49918V4.49822C12.2924 4.22151 11.6808 4.22162 11.1845 4.49822L2.10366 9.58055C1.60913 9.85854 1.30614 10.3687 1.30456 10.9187V21.0814L1.31996 21.2854C1.38689 21.7565 1.67502 22.1779 2.1104 22.4195H2.11136L11.1922 27.5019C11.6886 27.7787 12.3 27.7787 12.7962 27.5019L21.8771 22.4195L22.0533 22.3056C22.4426 22.0144 22.675 21.5636 22.6762 21.0824V10.9187C22.6748 10.4376 22.4424 9.98688 22.0533 9.6955L21.8771 9.58055L21.1598 9.17922C20.8382 8.99902 20.7781 8.58995 20.947 8.30183C21.1128 8.0197 21.4858 7.87303 21.7991 8.048L22.5366 8.45987L22.7012 8.56045C23.5066 9.08438 23.9979 9.96591 24 10.9177V21.0824C24 22.0955 23.4459 23.031 22.5472 23.5402H22.5462L13.4653 28.6226H13.4644C12.5605 29.1259 11.4491 29.126 10.5453 28.6226L1.46341 23.5402C0.560342 23.0338 0.00167075 22.0978 1.89029e-07 21.0824V10.9187C-0.000373914 9.90528 0.554559 8.96976 1.45379 8.46083V8.45987L10.5356 3.37849ZM11.4811 14.6073H8.85655V19.6916H7.16399V14.6073H4.53947V13.0757H11.4811V14.6073ZM15.5324 13.0757C17.6291 13.0757 19.1514 14.4655 19.1515 16.3822C19.1515 18.2991 17.6292 19.6916 15.5324 19.6916H12.8434V13.0757H15.5324ZM14.5359 18.1887H15.5324V18.1849C16.6441 18.1848 17.3904 17.4692 17.3906 16.3918C17.3906 15.3141 16.6443 14.5902 15.5324 14.5901H14.5359V18.1887ZM18.1271 5.36315C18.9244 5.36341 19.5712 5.98965 19.5712 6.76257C19.5712 7.53545 18.9244 8.16173 18.1271 8.16198C17.3295 8.16198 16.683 7.53561 16.6829 6.76257C16.6829 5.9895 17.3295 5.36315 18.1271 5.36315Z" fill="#FFFFFF"/><path d="M88.0975 9.99988C91.8513 9.99988 94.5377 12.6691 94.5377 16.0003C94.5375 19.3313 91.8088 21.9997 88.0553 21.9999C84.3017 21.9999 81.6154 19.3314 81.6151 16.0003C81.6151 12.7024 84.3439 10.0001 88.0975 9.99988ZM120 12.4586H113.399V14.8118H119.136V17.0947H113.399V19.5332H120V21.8021H110.74V10.1862H120V12.4586ZM54.2883 21.8012H51.4946L50.3843 19.1983H45.2374L44.1271 21.8012H41.398L46.6059 10.1159H49.075L54.2883 21.8012ZM41.7881 12.5527H37.2339V21.7995H34.5506L34.5569 12.5527H30V10.1985H41.7881V12.5527ZM61.0577 13.96L63.6316 10.1985H66.671L62.5958 15.8658L66.8378 21.7995H63.7168L60.9859 17.8235L58.2407 21.7995H55.2004L59.4398 15.8992L55.3753 10.1985H58.5035L61.0577 13.96ZM73.4736 10.1985C77.2969 10.1987 79.9398 12.7015 79.9398 15.9994C79.9394 19.297 77.2967 21.7993 73.4736 21.7995H68.7293V10.1985H73.4736ZM102.509 15.094L105.705 10.1862H108.589V21.7924H105.931V14.2185L102.509 19.172H102.44L99.0506 14.28V21.7924H96.4265V10.1862H99.3116L102.509 15.094ZM88.0661 12.3531C85.9117 12.3531 84.417 13.9773 84.4169 15.9986C84.4171 18.0196 85.9466 19.6528 88.1011 19.6528C90.2553 19.6526 91.7492 18.0195 91.7494 15.9986C91.7493 14.0107 90.2204 12.3533 88.0661 12.3531ZM71.4055 19.4963H73.4736C75.6628 19.4963 77.1414 18.0861 77.1417 15.9986C77.1417 13.9108 75.6631 12.5008 73.4736 12.5008H71.4055V19.4963ZM46.1979 16.9435H49.4175L47.8077 13.1829L46.1979 16.9435Z" fill="#FFFFFF"/></svg>
+    <span class="top-tag">AI Security course</span>
+  </div>
+</header>
+<main class="wrap">
+  <section class="card hero" aria-labelledby="pageTitle">
+    <h1 class="title" id="pageTitle"><span class="stk s1">Make</span><span class="stk s2">the call</span></h1>
+    <p class="lead">Six requests land on your desk today, one from each corner of the company. For each, make the call. Then see what happens next.</p>
+    <div class="legend">
+      <div class="lgt"><b><span class="lamp g"></span>Green light</b>Go ahead. No additional approval needed.</div>
+      <div class="lgt"><b><span class="lamp c"></span>Extra care</b>Allowed, but strip or check first.</div>
+      <div class="lgt"><b><span class="lamp i"></span>InfoSec first</b>Ask before you start.</div>
+      <div class="lgt"><b><span class="lamp n"></span>Not allowed</b>The policy rules it out.</div>
+    </div>
+    <div class="dots" id="dots" aria-hidden="true"></div>
+    <div class="ptext" id="ptext" role="status">Request 1 of 6</div>
+  </section>
+
+  <div id="stage"></div>
+
+  <section class="card tally" id="tally" role="status" hidden>
+    <h2 id="tHead"></h2>
+    <p id="tText"></p>
+    <ul class="rows" id="rows"></ul>
+    <div class="sheet">
+      <h3>Your cheat sheet</h3>
+      <div><span class="lamp g"></span><span><b>Green light:</b> public, or internal process notes, with no personal data. Go.</span></div>
+      <div><span class="lamp c"></span><span><b>Extra care:</b> real people or real client details in it, or the output goes to a client or a decision. Strip first, check after.</span></div>
+      <div><span class="lamp i"></span><span><b>InfoSec first:</b> bulk real customer data, a tool the policy doesn’t list, or anything you’re unsure about. Ask before you build.</span></div>
+    </div>
+    <button type="button" class="btn" id="again" style="margin-top:22px">Play the day again</button>
+  </section>
+
+  <p class="next">Next: Game 2, the Tool Inspector.</p>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var CALLS = [
+    { id: "g", label: "Green light", sub: "Go ahead", cls: "g" },
+    { id: "c", label: "Extra care", sub: "Strip or check first", cls: "c" },
+    { id: "i", label: "InfoSec first", sub: "Ask before you start", cls: "i" },
+    { id: "n", label: "Not allowed", sub: "The policy rules it out", cls: "n" }
+  ];
+  var NAME = { g: "Green light", c: "Extra care", i: "InfoSec first", n: "Not allowed" };
+
+  var REQ = [
+    { key: "A", time: "9:05", team: "HR", cls: "hr", title: "Review season",
+      text: "Your team lead asks you to use Claude to draft performance review comments for three teammates, based on notes she’s shared with you. The notes include each person’s name, role, and specific examples of what went well and what didn’t.",
+      right: "c",
+      pick: {
+        g: "You paste the notes as they are. Three colleagues’ names and performance assessments are now in a prompt, and nobody stopped to ask whether they needed to be. Named appraisals are personal data, and this was the moment to strip them.",
+        c: "Good call. You swap in [TEAMMATE 1], [TEAMMATE 2] and [TEAMMATE 3], generalize any example that could point to one person, and Claude still gives you a solid structure and tone. You add the names back yourself.",
+        i: "You wait for InfoSec, and the review comments slip a day. The task is allowed, and you can handle it yourself: anonymize first, then use Claude for structure and tone. Save InfoSec for what the rules don’t cover.",
+        n: "You tell your lead it can’t be done, and she writes them all by hand. The task isn’t banned. Drafting review comments is ordinary work, and it’s safe once the names and attributable examples are out."
+      },
+      why: "Performance review content is HR-related writing, which is on the extra-care list, and the notes hold personal data about named colleagues. Claude can help with structure and tone, but replace each person with a placeholder and generalize examples that could identify them first.",
+      rule: "Real people in the text? Strip them first." },
+
+    { key: "B", time: "10:20", team: "Sales", cls: "sales", title: "The pricing page",
+      text: "A sales colleague pastes a competitor’s pricing page into Slack and asks you to use Claude to build a comparison table, your product against theirs, for a client call tomorrow.",
+      right: "g",
+      pick: {
+        g: "Right call. It’s public information with no personal data and no client involved, so you go straight ahead. Before the call, you check every price in the table against the page.",
+        c: "You spend time hunting for something to anonymize, and there isn’t anything: the page is public. Keep your extra care for the checking, because prices are a classic place for confident mistakes.",
+        i: "You ask InfoSec, and they point out that a public page needs no review. The table misses the morning. Public data and a routine task need no sign-off.",
+        n: "You turn your colleague down. The task isn’t banned: it’s public information and no client is involved. Say yes, then check the figures."
+      },
+      why: "The competitor’s pricing page is public information: no personal data, nothing confidential, no client involved. One caveat: pricing is a high-risk area for confident mistakes (Module 5), and this table goes in front of a client, so check every figure.",
+      rule: "Public and no client? Go, then check the figures." },
+
+    { key: "C", time: "11:40", team: "Support", cls: "support", title: "The long thread",
+      text: "You’re handling a complex support escalation. The customer is frustrated and the ticket thread is long. You want to paste the full thread into Claude to get a suggested response. The thread contains the customer’s name, email, account tier, and a detailed description of their billing dispute.",
+      right: "c",
+      pick: {
+        g: "You paste the whole thread. Claude is an approved tool, but the thread carries the customer’s name, email and account details, and the AI doesn’t need any of them to suggest a good reply. They should have gone out first.",
+        c: "Right. You replace the name, email and account details with placeholders, keep the story of the billing dispute, and get a calm, useful draft. You put the real details back when you reply.",
+        i: "You hold the reply while you wait for InfoSec. The task is routine, and placeholders solve the data problem. This one is yours to handle.",
+        n: "You write the reply from scratch. Drafting support replies isn’t banned, and the only issue is what goes into the prompt."
+      },
+      why: "The task is allowed: drafting support replies is standard. But the thread can’t go in as it is. Replace the customer’s name, email and account details with placeholders first. The AI doesn’t need to know who the customer is. It needs to know what happened.",
+      rule: "Allowed task, sensitive thread? Placeholders first." },
+
+    { key: "D", time: "13:30", team: "Operations", cls: "operations", title: "The vendor contract",
+      text: "Legal sends you a vendor contract to review. You don’t have a legal background and want Claude to flag any clauses that look unusual or risky. The contract has both parties’ names, commercial terms, and signature blocks throughout.",
+      right: "c",
+      pick: {
+        g: "You paste the full contract. Two things go wrong at once: both companies and their commercial terms are in the prompt, and Claude calls a risky clause “standard” with total confidence. You would have believed it.",
+        c: "Right, and twice over. You swap in [COMPANY A], [COMPANY B] and placeholders for the figures, then treat Claude’s flags as a starting point and take them to Legal before you act.",
+        i: "You hold the contract while you wait for InfoSec. Anonymizing deals with the data, and Legal deals with the legal call. Both are within reach.",
+        n: "You send it back unreviewed. The task isn’t banned. With the parties anonymized, Claude can be a useful first pass, as long as Legal makes the call."
+      },
+      why: "Two separate issues. First, the contract identifies both parties, so anonymize it: replace company names, contacts and specific figures with placeholders. Second, legal interpretation is a high-risk area for confident mistakes, and Claude may call a clause “standard” when it isn’t. Use the output as a starting point, not a conclusion, and loop in Legal before acting.",
+      rule: "Contracts name names: anonymize, and keep Legal in the loop." },
+
+    { key: "E", time: "15:10", team: "Marketing", cls: "marketing", title: "The messy notes",
+      text: "You’re onboarding a new teammate and want to use Claude to turn your messy personal onboarding notes into a clean, structured checklist. The notes reference internal tool names, team Slack channels, and your manager’s name as the go-to contact for approvals.",
+      right: "g",
+      pick: {
+        g: "Right. Internal process notes with no personal or confidential data are what AI is good at. You have a tidy checklist in two minutes and a happier new teammate.",
+        c: "You spend ten minutes scrubbing tool names and channel names that aren’t sensitive. Nothing here needs anonymizing. Save your extra care for notes that hold real people or real figures.",
+        i: "You wait for InfoSec, and the new teammate waits with you. This is a low-risk, high-value task with nothing to review.",
+        n: "You write the checklist by hand. The task isn’t banned: it’s a green light."
+      },
+      why: "Internal process documentation with no personal data and nothing confidential is a clear green light. Tool names and Slack channels aren’t sensitive, and a manager’s name as the approvals contact isn’t a meaningful risk here. This is exactly the kind of low-risk, high-value task AI is well suited for.",
+      rule: "Internal process notes, no personal data? Go." },
+
+    { key: "F", time: "16:40", team: "RevOps", cls: "revops", title: "Two hundred tickets",
+      text: "Your manager asks you to use Claude to analyze 200 closed support tickets from last quarter to find the most common complaint patterns. She exports the tickets from the CRM. They include customer names, account IDs, and ticket content.",
+      right: "i",
+      pick: {
+        g: "You load all 200 tickets. A bulk export of real customer data is a different thing from a single paste, and this kind of workflow is on the InfoSec-review list for a reason. It should have been checked before you built it.",
+        c: "You anonymize a few tickets by hand and start on the rest. Anonymizing is a good instinct, but a 200-ticket bulk workflow on real customer data needs InfoSec to look at the approach first, even if you plan to strip the identifiers.",
+        i: "Right. You describe the use case to InfoSec: what data, how many tickets, what you want to learn. You ask how to proceed and get an approved approach before you build anything. Your manager’s request doesn’t replace that step.",
+        n: "You drop the analysis. It isn’t banned, and it’s genuinely useful work. It needs InfoSec to agree the approach first, so ask rather than abandon it."
+      },
+      why: "Bulk processing of real customer data is on the InfoSec-review list, however useful the analysis and whoever asks. The export holds direct identifiers at scale. Even if you plan to anonymize, a 200-ticket bulk workflow needs evaluating before you build it. Contact InfoSec first, describe the use case, and ask how to proceed.",
+      rule: "Bulk real customer data? Ask InfoSec before you build." }
+  ];
+
+  var $ = function (s) { return document.querySelector(s); };
+  var stage = $("#stage"), dotsEl = $("#dots"), ptext = $("#ptext"), tally = $("#tally");
+  var cur = 0, score = 0, log = [];
+
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+  function drawDots() {
+    dotsEl.innerHTML = "";
+    REQ.forEach(function (r, n) {
+      var d = document.createElement("span");
+      var res = log[n];
+      d.className = "dot" + (res ? (res.ok ? " ok" : " no") : (n === cur ? " cur" : ""));
+      d.textContent = res ? (res.ok ? "\u2713" : "\u2717") : r.key;
+      dotsEl.appendChild(d);
+    });
+  }
+
+  function show() {
+    var r = REQ[cur];
+    tally.hidden = true;
+    ptext.textContent = "Request " + (cur + 1) + " of " + REQ.length;
+    drawDots();
+    var btns = CALLS.map(function (c) {
+      return '<button type="button" class="call" data-c="' + c.id + '"><span class="lamp ' + c.cls + '"></span><b>' + c.label + '</b><span>' + c.sub + '</span></button>';
+    }).join("");
+    stage.innerHTML =
+      '<article class="card file">' +
+        '<span class="tab">Request ' + r.key + '</span>' +
+        '<div class="meta"><span class="chip t-' + r.cls + '">' + esc(r.team) + '</span><span class="clock">' + r.time + '</span></div>' +
+        '<h2>' + esc(r.title) + '</h2>' +
+        '<p class="story">' + esc(r.text) + '</p>' +
+        '<p class="q">What’s your call?</p>' +
+        '<div class="calls">' + btns + '</div>' +
+        '<div class="res" id="res" hidden role="status"></div>' +
+      '</article>';
+    stage.querySelectorAll(".call").forEach(function (b) {
+      b.addEventListener("click", function () { answer(b.getAttribute("data-c")); });
+    });
+  }
+
+  function answer(choice) {
+    if (log[cur]) return;
+    var r = REQ[cur], ok = (choice === r.right);
+    log[cur] = { ok: ok, choice: choice };
+    if (ok) score++;
+    drawDots();
+    stage.querySelectorAll(".call").forEach(function (b) {
+      var id = b.getAttribute("data-c");
+      b.disabled = true;
+      if (id === choice) { b.classList.add("chosen"); }
+      if (id === r.right) { b.classList.add("right"); b.insertAdjacentHTML("beforeend", "<em>\u2713 Right call</em>"); }
+    });
+    var res = $("#res"); res.hidden = false;
+    var last = (cur === REQ.length - 1);
+    res.innerHTML =
+      '<div class="verdict ' + (ok ? "right" : "wrong") + '"><h3>' + (ok ? "Right call." : "Not quite. The right call: " + NAME[r.right] + ".") + '</h3></div>' +
+      '<div class="box"><b>What happens next</b>' + esc(r.pick[choice]) + '</div>' +
+      '<div class="box"><b>Why</b>' + esc(r.why) + '</div>' +
+      '<span class="remember">Remember: ' + esc(r.rule) + '</span>' +
+      '<div><button type="button" class="btn" id="nextBtn">' + (last ? "See how your day went" : "Next request") + '</button></div>';
+    $("#nextBtn").addEventListener("click", function () { if (last) { finish(); } else { cur++; show(); stage.scrollIntoView({ behavior: "smooth", block: "start" }); } });
+    $("#nextBtn").focus({ preventScroll: true });
+    res.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function finish() {
+    stage.innerHTML = "";
+    ptext.textContent = "Day complete";
+    drawDots();
+    tally.hidden = false;
+    $("#tHead").textContent = score + " of " + REQ.length + " calls right";
+    $("#tText").textContent = score === REQ.length ? "Desk hero. Every call right, and you know why."
+      : score >= 4 ? "Solid day. Look again at the calls you missed and ask what was in the request."
+      : "Tough day. Check the cheat sheet, then play the day again and watch for the signals.";
+    $("#rows").innerHTML = REQ.map(function (r, n) {
+      var l = log[n];
+      return '<li><span class="mk' + (l.ok ? "" : " no") + '">' + (l.ok ? "\u2713" : "\u2717") + '</span><span><b>' + r.key + ". " + esc(r.title) + '</b><br>You said ' + NAME[l.choice] + (l.ok ? "." : ". Right call: " + NAME[r.right] + ".") + '</span></li>';
+    }).join("");
+    tally.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  $("#again").addEventListener("click", function () { cur = 0; score = 0; log = []; show(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+  show();
+})();
+</script>
+</body>
+</html>
